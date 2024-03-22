@@ -4,7 +4,15 @@ import { MainContainer } from "../../components/MainContainer/MainContainer";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+
+import {
+  createUserWithEmailAndPassword,
+  signOut,
+  updateProfile,
+} from "firebase/auth";
+import { auth } from "../../services/firebaseServices";
+import { useEffect } from "react";
 
 const schema = z.object({
   name: z.string().min(5, "Digite pelo menos 5 caracteres!"),
@@ -18,6 +26,8 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>;
 
 function SignUp() {
+  const navigate = useNavigate();
+
   const {
     register,
     handleSubmit,
@@ -27,8 +37,28 @@ function SignUp() {
     mode: "onChange",
   });
 
-  function submitData(data: FormData) {
-    console.log(data);
+  useEffect(() => {
+    async function handleSignOut() {
+      await signOut(auth);
+    }
+
+    handleSignOut();
+  }, []);
+
+  async function submitData(data: FormData) {
+    createUserWithEmailAndPassword(auth, data.email, data.password)
+      .then(async (user) => {
+        await updateProfile(user.user, {
+          displayName: data.name,
+        });
+
+        console.log("Cadastrado com sucesso!");
+        navigate("/dashboard", { replace: true });
+      })
+      .catch((error) => {
+        console.log("Erro ao cadastrar usuário!");
+        console.log(error);
+      });
   }
 
   return (
@@ -77,7 +107,7 @@ function SignUp() {
             type="submit"
             className="bg-zinc-900 w-full rounded-md text-white h-12 font-medium"
           >
-            Acessar
+            Cadastrar
           </button>
         </form>
         <Link to="/signIn">Já tem uma conta?</Link>
