@@ -7,6 +7,7 @@ import NewCar from "../pages/dashboard/newCar/newCar";
 import SignIn from "../pages/signIn/signIn";
 import SignUp from "../pages/signUp/signUp";
 import Layout from "../components/layout/layout";
+import { Private } from "./private";
 
 export const router = createBrowserRouter([
   {
@@ -22,11 +23,19 @@ export const router = createBrowserRouter([
       },
       {
         path: "/dashboard",
-        element: <Dashboard />,
+        element: (
+          <Private>
+            <Dashboard />
+          </Private>
+        ),
       },
       {
         path: "/dashboard/newcar",
-        element: <NewCar />,
+        element: (
+          <Private>
+            <NewCar />
+          </Private>
+        ),
       },
     ],
   },

@@ -1,11 +1,12 @@
 import Logo from "../../assets/logo.png";
 import { FaCircleUser } from "react-icons/fa6";
-import { FaSignOutAlt } from "react-icons/fa";
+import { FaSignInAlt } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import { useContext } from "react";
+import { AuthContext } from "../../contexts/AuthContext";
 
 export function Header() {
-  const signed = true;
-  const loadingAuth = false;
+  const { signed, loadingAuth } = useContext(AuthContext);
 
   return (
     <div className="w-full flex items-center justify-center h-16 bg-white drop-shadow mb-4">
@@ -22,7 +23,7 @@ export function Header() {
 
         {!loadingAuth && !signed && (
           <Link to="signIn">
-            <FaSignOutAlt size={24} color="#585858" />
+            <FaSignInAlt size={24} color="#585858" />
           </Link>
         )}
       </header>
