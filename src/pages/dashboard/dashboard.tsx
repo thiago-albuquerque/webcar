@@ -1,9 +1,12 @@
-function dashboard() {
+import { MainContainer } from "../../components/MainContainer/MainContainer";
+import PanelHeader from "../../components/PanelHeader/PanelHeader";
+
+function Dashboard() {
   return (
-    <div>
-      <h1>dashboard</h1>
-    </div>
+    <MainContainer>
+      <PanelHeader />
+    </MainContainer>
   );
 }
 
-export default dashboard;
+export default Dashboard;

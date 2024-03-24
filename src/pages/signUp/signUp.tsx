@@ -12,7 +12,8 @@ import {
   updateProfile,
 } from "firebase/auth";
 import { auth } from "../../services/firebaseServices";
-import { useEffect } from "react";
+import { useEffect, useContext } from "react";
+import { AuthContext } from "../../contexts/AuthContext";
 
 const schema = z.object({
   name: z.string().min(5, "Digite pelo menos 5 caracteres!"),
@@ -26,6 +27,7 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>;
 
 function SignUp() {
+  const { handleInfoUser } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const {
@@ -50,6 +52,12 @@ function SignUp() {
       .then(async (user) => {
         await updateProfile(user.user, {
           displayName: data.name,
+        });
+
+        handleInfoUser({
+          uid: user.user.uid,
+          name: data.name,
+          email: data.email,
         });
 
         console.log("Cadastrado com sucesso!");
