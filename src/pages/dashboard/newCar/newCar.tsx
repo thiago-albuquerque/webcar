@@ -1,11 +1,22 @@
-import { FiUpload } from "react-icons/fi";
+import { ChangeEvent, useContext, useState } from "react";
+import { FiTrash, FiUpload } from "react-icons/fi";
 import { MainContainer } from "../../../components/MainContainer/MainContainer";
 import PanelHeader from "../../../components/PanelHeader/PanelHeader";
 
 import { useForm } from "react-hook-form";
 import { Input } from "../../../components/Input/Input";
+
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { AuthContext } from "../../../contexts/AuthContext";
+import { v4 as uuidV4 } from "uuid";
+import { storage } from "../../../services/firebaseServices";
+import {
+  ref,
+  uploadBytes,
+  getDownloadURL,
+  deleteObject,
+} from "firebase/storage";
 
 const schema = z.object({
   name: z.string().min(1, "Digite o nome da marca!"),
@@ -25,7 +36,16 @@ const schema = z.object({
 
 type FormData = z.infer<typeof schema>;
 
+interface ImageItemsProps {
+  uid: string;
+  name: string;
+  previewUrl: string;
+  url: string;
+}
+
 function newCar() {
+  const { user } = useContext(AuthContext);
+
   const {
     register,
     handleSubmit,
@@ -36,6 +56,47 @@ function newCar() {
     mode: "onChange",
   });
 
+  const [carImage, setCarImage] = useState<ImageItemsProps[]>([]);
+
+  async function handleFile(event: ChangeEvent<HTMLInputElement>) {
+    if (event.target.files && event.target.files[0]) {
+      const image = event.target.files[0];
+
+      if (image.type === "image/jpeg" || image.type === "image/png") {
+        await handleUpload(image);
+      } else {
+        alert("Envie uma imagem jpeg ou png!");
+        return;
+      }
+
+      console.log(image);
+    }
+  }
+
+  async function handleUpload(image: File) {
+    if (!user?.uid) {
+      return;
+    }
+
+    const currentUid = user?.uid;
+    const uidImage = uuidV4();
+
+    const uploadRef = ref(storage, `images/${currentUid}/${uidImage}`);
+
+    uploadBytes(uploadRef, image).then((snapshot) => {
+      getDownloadURL(snapshot.ref).then((downloadUrl) => {
+        const imageItem = {
+          uid: currentUid,
+          name: uidImage,
+          previewUrl: URL.createObjectURL(image),
+          url: downloadUrl,
+        };
+
+        setCarImage((images) => [...images, imageItem]);
+      });
+    });
+  }
+
   async function submitData(data: FormData) {
     console.log(data);
   }
@@ -44,7 +105,7 @@ function newCar() {
     <MainContainer>
       <PanelHeader />
 
-      <section className="w-full bg-white p-4 rounded-lg flex flex-col sm:flex-row items-center justify-center gap-2">
+      <section className="w-full bg-white p-4 rounded-lg flex flex-col sm:flex-row items-center gap-2">
         <button className="border-2 w-52 rounded-lg flex items-center justify-center border-gray-200 h-32">
           <div className="absolute cursor-pointer">
             <FiUpload size={30} color="#000" />
@@ -53,10 +114,27 @@ function newCar() {
             <input
               type="file"
               accept="image/*"
+              onChange={handleFile}
               className="opacity-0 cursor-pointer"
             />
           </div>
         </button>
+
+        {carImage.map((item) => (
+          <div
+            key={item.name}
+            className="w-full h-32 flex items-center justify-center "
+          >
+            <button className="absolute">
+              <FiTrash size={28} color="#fff" />
+            </button>
+            <img
+              src={item.previewUrl}
+              alt="WebCar"
+              className="w-full rounded-lg h-32 object-cover"
+            />
+          </div>
+        ))}
       </section>
 
       <section className="w-full bg-white p-4 rounded-lg flex flex-col sm:flex-row items-center justify-center gap-2 my-8">
