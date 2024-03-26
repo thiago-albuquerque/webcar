@@ -1,5 +1,5 @@
 import { ChangeEvent, useContext, useState } from "react";
-import { FiTrash, FiUpload } from "react-icons/fi";
+import { FiTrash2, FiUpload } from "react-icons/fi";
 import { MainContainer } from "../../../components/MainContainer/MainContainer";
 import PanelHeader from "../../../components/PanelHeader/PanelHeader";
 
@@ -10,13 +10,14 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AuthContext } from "../../../contexts/AuthContext";
 import { v4 as uuidV4 } from "uuid";
-import { storage } from "../../../services/firebaseServices";
+import { storage, dataBase } from "../../../services/firebaseServices";
 import {
   ref,
   uploadBytes,
   getDownloadURL,
   deleteObject,
 } from "firebase/storage";
+import { addDoc, collection } from "firebase/firestore";
 
 const schema = z.object({
   name: z.string().min(1, "Digite o nome da marca!"),
@@ -98,7 +99,55 @@ function newCar() {
   }
 
   async function submitData(data: FormData) {
-    console.log(data);
+    if (carImage.length === 0) {
+      alert("Envie alguma imagem deste carro!");
+      return;
+    }
+
+    const carListImages = carImage.map((car) => {
+      return {
+        uid: car.uid,
+        name: car.name,
+        url: car.url,
+      };
+    });
+
+    addDoc(collection(dataBase, "cars"), {
+      name: data.name,
+      model: data.model,
+      year: data.year,
+      km: data.km,
+      price: data.price,
+      city: data.city,
+      whatsapp: data.whatsapp,
+      description: data.description,
+      created: new Date(),
+      owner: user?.name,
+      uid: user?.uid,
+      images: carListImages,
+    })
+      .then(() => {
+        reset();
+        setCarImage([]);
+        console.log("Carro cadastrado com sucesso!");
+      })
+      .catch((error) => {
+        console.log("Erro ao cadastrar carro!: ", error);
+      });
+  }
+
+  async function handleDeleteImage(item: ImageItemsProps) {
+    const imagePath = `images/${item.uid}/${item.name}`;
+
+    const imageRef = ref(storage, imagePath);
+
+    try {
+      await deleteObject(imageRef);
+
+      setCarImage(carImage.filter((car) => car.url !== item.url));
+    } catch (error) {
+      console.log("Erro ao deletar: ", error);
+    }
   }
 
   return (
@@ -125,8 +174,11 @@ function newCar() {
             key={item.name}
             className="w-full h-32 flex items-center justify-center "
           >
-            <button className="absolute">
-              <FiTrash size={28} color="#fff" />
+            <button
+              className="absolute"
+              onClick={() => handleDeleteImage(item)}
+            >
+              <FiTrash2 size={28} color="#fff" />
             </button>
             <img
               src={item.previewUrl}

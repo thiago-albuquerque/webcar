@@ -40,12 +40,12 @@ function SignIn() {
     handleSignOut();
   }, []);
 
-  async function submitData(data: FormData) {
+  function submitData(data: FormData) {
     signInWithEmailAndPassword(auth, data.email, data.password)
-      .then(async (user) => {
+      .then((user) => {
         console.log("Logado com sucesso!");
         console.log(user);
-        await navigate("/dashboard", { replace: true });
+        navigate("/dashboard", { replace: true });
       })
       .catch((error) => {
         console.log("Erro ao fazer login!");

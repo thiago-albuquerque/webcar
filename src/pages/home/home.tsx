@@ -1,6 +1,65 @@
+import { useState, useEffect } from "react";
 import { MainContainer } from "../../components/MainContainer/MainContainer";
+import { collection, query, getDocs, orderBy } from "firebase/firestore";
+import { dataBase } from "../../services/firebaseServices";
+import { Link } from "react-router-dom";
+import Logo from "../../assets/logo.png";
+
+interface CarsProps {
+  id: string;
+  name: string;
+  model: string;
+  year: string;
+  uid: string;
+  price: string | number;
+  city: string;
+  km: string | number;
+  images: CarImageProps[];
+}
+
+interface CarImageProps {
+  name: string;
+  uid: string;
+  url: string;
+}
 
 function Home() {
+  const [cars, setCars] = useState<CarsProps[]>([]);
+  const [loadImages, setLoadImages] = useState<string[]>([]);
+
+  useEffect(() => {
+    function loadCars() {
+      const carsRef = collection(dataBase, "cars");
+      const queryRef = query(carsRef, orderBy("created", "desc"));
+
+      getDocs(queryRef).then((snapshot) => {
+        const listCars = [] as CarsProps[];
+
+        snapshot.forEach((doc) => {
+          listCars.push({
+            id: doc.id,
+            name: doc.data().name,
+            model: doc.data().model,
+            year: doc.data().year,
+            km: doc.data().km,
+            price: doc.data().price,
+            city: doc.data().city,
+            images: doc.data().images,
+            uid: doc.data().uid,
+          });
+        });
+
+        setCars(listCars);
+      });
+    }
+
+    loadCars();
+  }, []);
+
+  function handleImageLoad(id: string) {
+    setLoadImages((prevImageLoaded) => [...prevImageLoaded, id]);
+  }
+
   return (
     <MainContainer>
       <section className="w-full max-w-3xl mx-auto flex p-4 rounded-lg bg-white justify-between items-center gap-2">
@@ -19,114 +78,43 @@ function Home() {
       </h1>
 
       <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-center">
-        <article className="w-full bg-white rounded-lg hover:scale-105 transition-all cursor-pointer">
-          <img
-            src="https://img.olx.com.br/images/15/155441483778514.jpg"
-            alt="Nissan Frontier Pro 4x 2023 branca"
-            className="w-full rounded-lg max-h-60 object-cover"
-          />
-          <h2 className="font-bold mx-2 mt-2">Nissan Frontier Pro 4x</h2>
-          <div>
-            <p className="mx-2 mb-2 text-slate-500">Ano 2023/2024 | 7.000 km</p>
-            <h1 className="font-bold mx-2 mb-2 text-xl">R$ 305.000,00</h1>
-          </div>
-          <hr className="mx-2" />
-          <div>
-            <p className="font-bold mx-2 my-2 text-slate-500">
-              Campo Grande - MS
-            </p>
-          </div>
-        </article>
-        <article className="w-full bg-white rounded-lg hover:scale-105 transition-all cursor-pointer">
-          <img
-            src="https://img.olx.com.br/images/15/155441483778514.jpg"
-            alt="Nissan Frontier Pro 4x 2023 branca"
-            className="w-full rounded-lg max-h-60 object-cover"
-          />
-          <h2 className="font-bold mx-2 mt-2">Nissan Frontier Pro 4x</h2>
-          <div>
-            <p className="mx-2 mb-2 text-slate-500">Ano 2023/2024 | 7.000 km</p>
-            <h1 className="font-bold mx-2 mb-2 text-xl">R$ 305.000,00</h1>
-          </div>
-          <hr className="mx-2" />
-          <div>
-            <p className="font-bold mx-2 my-2 text-slate-500">
-              Campo Grande - MS
-            </p>
-          </div>
-        </article>
-        <article className="w-full bg-white rounded-lg hover:scale-105 transition-all cursor-pointer">
-          <img
-            src="https://img.olx.com.br/images/15/155441483778514.jpg"
-            alt="Nissan Frontier Pro 4x 2023 branca"
-            className="w-full rounded-lg max-h-60 object-cover"
-          />
-          <h2 className="font-bold mx-2 mt-2">Nissan Frontier Pro 4x</h2>
-          <div>
-            <p className="mx-2 mb-2 text-slate-500">Ano 2023/2024 | 7.000 km</p>
-            <h1 className="font-bold mx-2 mb-2 text-xl">R$ 305.000,00</h1>
-          </div>
-          <hr className="mx-2" />
-          <div>
-            <p className="font-bold mx-2 my-2 text-slate-500">
-              Campo Grande - MS
-            </p>
-          </div>
-        </article>
-        <article className="w-full bg-white rounded-lg hover:scale-105 transition-all cursor-pointer">
-          <img
-            src="https://img.olx.com.br/images/15/155441483778514.jpg"
-            alt="Nissan Frontier Pro 4x 2023 branca"
-            className="w-full rounded-lg max-h-60 object-cover"
-          />
-          <h2 className="font-bold mx-2 mt-2">Nissan Frontier Pro 4x</h2>
-          <div>
-            <p className="mx-2 mb-2 text-slate-500">Ano 2023/2024 | 7.000 km</p>
-            <h1 className="font-bold mx-2 mb-2 text-xl">R$ 305.000,00</h1>
-          </div>
-          <hr className="mx-2" />
-          <div>
-            <p className="font-bold mx-2 my-2 text-slate-500">
-              Campo Grande - MS
-            </p>
-          </div>
-        </article>
-        <article className="w-full bg-white rounded-lg hover:scale-105 transition-all cursor-pointer">
-          <img
-            src="https://img.olx.com.br/images/15/155441483778514.jpg"
-            alt="Nissan Frontier Pro 4x 2023 branca"
-            className="w-full rounded-lg max-h-60 object-cover"
-          />
-          <h2 className="font-bold mx-2 mt-2">Nissan Frontier Pro 4x</h2>
-          <div>
-            <p className="mx-2 mb-2 text-slate-500">Ano 2023/2024 | 7.000 km</p>
-            <h1 className="font-bold mx-2 mb-2 text-xl">R$ 305.000,00</h1>
-          </div>
-          <hr className="mx-2" />
-          <div>
-            <p className="font-bold mx-2 my-2 text-slate-500">
-              Campo Grande - MS
-            </p>
-          </div>
-        </article>
-        <article className="w-full bg-white rounded-lg hover:scale-105 transition-all cursor-pointer">
-          <img
-            src="https://img.olx.com.br/images/15/155441483778514.jpg"
-            alt="Nissan Frontier Pro 4x 2023 branca"
-            className="w-full rounded-lg max-h-60 object-cover"
-          />
-          <h2 className="font-bold mx-2 mt-2">Nissan Frontier Pro 4x</h2>
-          <div>
-            <p className="mx-2 mb-2 text-slate-500">Ano 2023/2024 | 7.000 km</p>
-            <h1 className="font-bold mx-2 mb-2 text-xl">R$ 305.000,00</h1>
-          </div>
-          <hr className="mx-2" />
-          <div>
-            <p className="font-bold mx-2 my-2 text-slate-500">
-              Campo Grande - MS
-            </p>
-          </div>
-        </article>
+        {cars.map((car) => (
+          <Link key={car.id} to={`/car/${car.id}`}>
+            <div
+              className="w-full bg-white rounded-lg"
+              style={{
+                display: loadImages.includes(car.id) ? "none" : "block",
+              }}
+            >
+              <img src={Logo} alt="Web Car" className="w-full object-cover" />
+            </div>
+
+            <article className="w-full bg-white rounded-lg hover:scale-105 transition-all cursor-pointer">
+              <img
+                src={car.images[0].url}
+                alt={car.name}
+                onLoad={() => handleImageLoad(car.id)}
+                className="w-full rounded-lg max-h-60 object-cover"
+                style={{
+                  display: loadImages.includes(car.id) ? "block" : "none",
+                }}
+              />
+              <h2 className="font-bold mx-2 mt-2">
+                {car.name} {car.model}
+              </h2>
+              <div>
+                <p className="mx-2 mb-2 text-slate-500">
+                  Ano {car.year} | {car.km} km
+                </p>
+                <h1 className="font-bold mx-2 mb-2 text-xl">R$ {car.price}</h1>
+              </div>
+              <hr className="mx-2" />
+              <div>
+                <p className="font-bold mx-2 my-2 text-slate-500">{car.city}</p>
+              </div>
+            </article>
+          </Link>
+        ))}
       </section>
     </MainContainer>
   );
