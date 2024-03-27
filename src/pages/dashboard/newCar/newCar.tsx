@@ -81,7 +81,6 @@ function newCar() {
 
     const currentUid = user?.uid;
     const uidImage = uuidV4();
-
     const uploadRef = ref(storage, `images/${currentUid}/${uidImage}`);
 
     uploadBytes(uploadRef, image).then((snapshot) => {
@@ -138,12 +137,10 @@ function newCar() {
 
   async function handleDeleteImage(item: ImageItemsProps) {
     const imagePath = `images/${item.uid}/${item.name}`;
-
     const imageRef = ref(storage, imagePath);
 
     try {
       await deleteObject(imageRef);
-
       setCarImage(carImage.filter((car) => car.url !== item.url));
     } catch (error) {
       console.log("Erro ao deletar: ", error);

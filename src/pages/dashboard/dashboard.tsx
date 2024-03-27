@@ -10,7 +10,8 @@ import {
   deleteDoc,
 } from "firebase/firestore";
 import { useContext, useEffect, useState } from "react";
-import { dataBase } from "../../services/firebaseServices";
+import { dataBase, storage } from "../../services/firebaseServices";
+import { ref, deleteObject } from "firebase/storage";
 import { AuthContext } from "../../contexts/AuthContext";
 import Logo from "../../assets/logo.png";
 
@@ -73,12 +74,22 @@ function Dashboard() {
     setLoadImages((prevImageLoaded) => [...prevImageLoaded, id]);
   }
 
-  async function handleDeleteCar(id: string) {
-    const docRef = doc(dataBase, "cars", id);
-
+  async function handleDeleteCar(car: CarsProps) {
+    const itemCar = car;
+    const docRef = doc(dataBase, "cars", itemCar.id);
     await deleteDoc(docRef);
 
-    setCars(cars.filter((car) => car.id !== id));
+    itemCar.images.map(async (image) => {
+      const imagePath = `images/${image.uid}/${image.name}`;
+      const imageRef = ref(storage, imagePath);
+
+      try {
+        await deleteObject(imageRef);
+        setCars(cars.filter((car) => car.id !== itemCar.id));
+      } catch (error) {
+        console.log("Erro ao deletar: ", error);
+      }
+    });
   }
 
   return (
@@ -98,7 +109,7 @@ function Dashboard() {
 
             <article className="w-full bg-white rounded-lg hover:scale-105 transition-all cursor-pointer relative">
               <button
-                onClick={() => handleDeleteCar(car.id)}
+                onClick={() => handleDeleteCar(car)}
                 className="absolute rounded-full bg-white p-2 right-4 top-4 drop-shadow"
               >
                 <FiTrash2 size={24} color="#000" />
