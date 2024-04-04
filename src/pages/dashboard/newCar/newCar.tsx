@@ -274,7 +274,6 @@ function newCar() {
             <label className="text-slate-600">Descrição</label>
             <textarea
               className="w-full border-2 rounded-mg h-24 px-2"
-              name="description"
               id="description"
               placeholder="Ex.: Completo, IPVA 2024 pago, vistoria em dia..."
               {...register("description")}
