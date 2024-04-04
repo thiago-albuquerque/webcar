@@ -104,7 +104,7 @@ function carDetails() {
         <section className="w-full bg-white rounded-lg p-6 my-4">
           <div className="flex flex-col sm:flex-row mb-4 items-center justify-between">
             <h1 className="font-bold text-3xl text-black">{car?.name}</h1>
-            <h1 className="font-bold text-3xl text-black">{car?.price}</h1>
+            <h1 className="font-bold text-3xl text-black">R$ {car?.price}</h1>
           </div>
 
           <p>{car?.model}</p>
@@ -135,7 +135,11 @@ function carDetails() {
           <strong>Contato</strong>
           <p className="mb-4">{car?.whatsapp}</p>
 
-          <a className="bg-green-500 max-w-lg text-white flex items-center justify-center gap-2 my-6 h-11 text-x1 rounded-lg font-medium cursor-pointer m-auto">
+          <a
+            href={`https://api.whatsapp.com/send?phone?=${car?.whatsapp}&text=Olá, ${car?.owner}! Gostaria de mais informações sobre o carro ${car?.name} ${car?.model}`}
+            target="_blank"
+            className="bg-green-500 max-w-lg text-white flex items-center justify-center gap-2 my-6 h-11 text-x1 rounded-lg font-medium cursor-pointer m-auto"
+          >
             Conversar com o vendedor
             <FaWhatsapp size={26} color="#fff" />
           </a>

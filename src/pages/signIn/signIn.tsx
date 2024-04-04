@@ -9,6 +9,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { auth } from "../../services/firebaseServices";
 import { useEffect } from "react";
+import toast from "react-hot-toast";
 
 const schema = z.object({
   email: z
@@ -45,11 +46,13 @@ function SignIn() {
       .then((user) => {
         console.log("Logado com sucesso!");
         console.log(user);
+        toast.success("Logado com sucesso!");
         navigate("/dashboard", { replace: true });
       })
       .catch((error) => {
         console.log("Erro ao fazer login!");
         console.log(error);
+        toast.error("Erro ao fazer login!");
       });
   }
 

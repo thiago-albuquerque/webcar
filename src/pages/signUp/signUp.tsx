@@ -14,6 +14,7 @@ import {
 import { auth } from "../../services/firebaseServices";
 import { useEffect, useContext } from "react";
 import { AuthContext } from "../../contexts/AuthContext";
+import toast from "react-hot-toast";
 
 const schema = z.object({
   name: z.string().min(5, "Digite pelo menos 5 caracteres!"),
@@ -61,11 +62,13 @@ function SignUp() {
         });
 
         console.log("Cadastrado com sucesso!");
+        toast.success("Cadastrado com sucesso!");
         navigate("/dashboard", { replace: true });
       })
       .catch((error) => {
         console.log("Erro ao cadastrar usuário!");
         console.log(error);
+        toast.error("Erro ao cadastrar!");
       });
   }
 
@@ -79,7 +82,7 @@ function SignUp() {
           onSubmit={handleSubmit(submitData)}
         >
           <div className="mb-4">
-            <label className="text-slate-600">Nome completo</label>
+            <label className="text-slate-600">Nome</label>
             <Input
               type="name"
               placeholder="Digite seu email..."

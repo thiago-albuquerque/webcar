@@ -6,7 +6,7 @@ import { useContext } from "react";
 import { AuthContext } from "../../contexts/AuthContext";
 
 export function Header() {
-  const { signed, loadingAuth } = useContext(AuthContext);
+  const { signed, loadingAuth, user } = useContext(AuthContext);
 
   return (
     <div className="w-full flex items-center justify-center h-16 bg-white drop-shadow mb-4">
@@ -16,7 +16,12 @@ export function Header() {
         </Link>
 
         {!loadingAuth && signed && (
-          <Link to="dashboard">
+          <Link
+            to="dashboard"
+            className="flex items-center justify-center font-bold gap-4 "
+          >
+            {" "}
+            Olá, {user?.name}!
             <FaCircleUser size={24} color="#585858" />
           </Link>
         )}

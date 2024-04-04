@@ -18,6 +18,7 @@ import {
   deleteObject,
 } from "firebase/storage";
 import { addDoc, collection } from "firebase/firestore";
+import toast from "react-hot-toast";
 
 const schema = z.object({
   name: z.string().min(1, "Digite o nome da marca!"),
@@ -99,7 +100,7 @@ function newCar() {
 
   async function submitData(data: FormData) {
     if (carImage.length === 0) {
-      alert("Envie alguma imagem deste carro!");
+      toast.error("Envie alguma imagem deste carro!");
       return;
     }
 
@@ -112,8 +113,8 @@ function newCar() {
     });
 
     addDoc(collection(dataBase, "cars"), {
-      name: data.name,
-      model: data.model,
+      name: data.name.toUpperCase(),
+      model: data.model.toUpperCase(),
       year: data.year,
       km: data.km,
       price: data.price,
@@ -129,9 +130,11 @@ function newCar() {
         reset();
         setCarImage([]);
         console.log("Carro cadastrado com sucesso!");
+        toast.success("Carro cadastrado com sucesso!");
       })
       .catch((error) => {
         console.log("Erro ao cadastrar carro!: ", error);
+        toast.error("Erro ao cadastrar carro!");
       });
   }
 
@@ -192,7 +195,7 @@ function newCar() {
             <label className="text-slate-600">Nome</label>
             <Input
               type="name"
-              placeholder="Ex.: Nissan"
+              placeholder="Ex.: Nissan Frontier"
               name="name"
               errors={errors.name?.message}
               register={register}
@@ -203,7 +206,7 @@ function newCar() {
             <label className="text-slate-600">Modelo</label>
             <Input
               type="model"
-              placeholder="Ex.: Frontier Pro 4x 2.0"
+              placeholder="Ex.: Pro 4x 2.0"
               name="model"
               errors={errors.model?.message}
               register={register}
