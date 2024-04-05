@@ -19,4 +19,3 @@ e também pode entrar em contato com outros anunciantes através do whatsapp.
 + Tailwind CSS
 + Swiper Slider
 
-## Deploy:
