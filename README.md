@@ -18,4 +18,5 @@ e também pode entrar em contato com outros anunciantes através do whatsapp.
 + React Icons
 + Tailwind CSS
 + Swiper Slider
++ React Hot Toast
 
