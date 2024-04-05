@@ -12,7 +12,7 @@ e também pode entrar em contato com outros anunciantes através do whatsapp.
 + FirebaseAuth
 + Firebase Firestore
 + Firebase Storage
-+ React Rounter Dom
++ React Router Dom
 + React Hook Form
 + Zod
 + React Icons
